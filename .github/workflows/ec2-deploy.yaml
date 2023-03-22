@@ -61,7 +61,7 @@ jobs:
         run: |
          npm install
 
-         echo "Listing files..."
+         echo "Listing files...."
          ls -la
 
       - name: Test SSH connection
