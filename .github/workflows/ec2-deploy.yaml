@@ -68,9 +68,6 @@ jobs:
         run: |
           rsync -avzr --delete ./node_modules ./proxy.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
 
-      - name: Kill existing node processes and run the app
+      - name: Restart pii-proxy app.
         run: |
-          ssh $SSH_USER@$SSH_HOST \
-          "kill -n 9 $(ps aux | grep 'node proxy.js' | cut -d ' ' -f5); \
-          (cd $SSH_REMOTE_PATH; \
-          nohup node proxy.js > /dev/null 2>&1 &)"
+          ssh $SSH_USER@$SSH_HOST "pm2 restart pii-proxy"
