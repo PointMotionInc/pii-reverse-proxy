@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set development environment variables
-        if: endsWith(github.ref, '/dev')
+      - name: Set environment variables
+        if: endsWith(github.ref, '/main')
         run: |
           echo "SSH_REMOTE_PATH=/home/ubuntu/pii-reverse-proxy" >> $GITHUB_ENV
           echo "SSH_HOST=pii.proxy.pointmotioncontrol.com" >> $GITHUB_ENV
