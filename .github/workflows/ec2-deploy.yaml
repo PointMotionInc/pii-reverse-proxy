@@ -64,15 +64,9 @@ jobs:
          echo "Listing files...."
          ls -la
 
-      - name: Test SSH connection
+      - name: Copy Files Over Remote Server
         run: |
-          ssh pii.proxy.pointmotioncontrol.com "ls -la"
-
-      # - name: Copy Files Over Remote Server
-      #   run: |
-      #     rsync -avzr --delete \
-      #     /home/runner/work/pii-reverse-proxy/pii-reverse-proxy/node_modules \
-      #     $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
+          rsync -avzr --delete ./node_modules ./index.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
 
       # - name: Kill existing node processes and run the app
       #   run: |
