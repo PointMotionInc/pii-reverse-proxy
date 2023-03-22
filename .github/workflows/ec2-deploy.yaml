@@ -71,6 +71,6 @@ jobs:
       - name: Kill existing node processes and run the app
         run: |
           ssh $SSH_USER@$SSH_HOST \
-          "kill -9 $(ps aux | grep 'node proxy.js'" | cut -d ' ' -f5)
+          "kill -9 $(ps aux | grep 'node proxy.js' | cut -d ' ' -f5)
           (cd $SSH_REMOTE_PATH; \
           nohup node proxy.js > /dev/null 2>&1 &)"
