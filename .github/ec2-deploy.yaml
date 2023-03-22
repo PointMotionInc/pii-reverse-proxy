@@ -1,0 +1,82 @@
+name: Push to EC2
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - 'main'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set development environment variables
+        if: endsWith(github.ref, '/dev')
+        run: |
+          echo "SSH_REMOTE_PATH=/home/ubuntu/pii-reverse-proxy" >> $GITHUB_ENV
+          echo "SSH_HOST=pii.proxy.pointmotioncontrol.com" >> $GITHUB_ENV
+          echo "SSH_USER=ubuntu" >> $GITHUB_ENV
+          echo ${{ secrets.PII_PROXY_SSH_PRIVATE_KEY_B64ENCODED }} | base64 -d > ~/ssh_key
+
+      - name: Setup SSH Files permissions
+        run: |
+          echo "Setting proper SSH private key permissions..."
+          chmod 600 ~/ssh_key
+          ls -la ~
+
+          echo "Creating .ssh dir..."
+          mkdir -p ~/.ssh
+
+          echo "Setting proper .ssh dir permissions..."
+          chmod 700 ~/.ssh
+          ls -la ~
+
+          echo "Creating known_hosts file..."
+          touch ~/.ssh/known_hosts
+          chmod 777 ~/.ssh/known_hosts
+          ls -la ~/.ssh/
+
+          echo "Marking EC2 server as a known host..."
+          ssh-keyscan -t rsa $SSH_HOST >> ~/.ssh/known_hosts
+
+      - name: Setup SSH Config file
+        run: |
+          touch ~/.ssh/config
+          echo "Host $SSH_HOST" >> ~/.ssh/config
+          echo "HostName $SSH_HOST" >> ~/.ssh/config
+          echo "User $SSH_USER" >> ~/.ssh/config
+          echo "IdentityFile ~/ssh_key" >> ~/.ssh/config
+          echo "IdentitiesOnly yes" >> ~/.ssh/config
+
+      # Uncomment this if you want to debug Github action using SSH.
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
+
+      - name: Build Deployable App
+        run: |
+         npm install
+
+         echo "Listing files..."
+         ls -la
+
+      - name: Test SSH connection
+        run: |
+          ssh pii.proxy.pointmotioncontrol.com "ls -la"
+
+      # - name: Copy Files Over Remote Server
+      #   run: |
+      #     rsync -avzr --delete \
+      #     /home/runner/work/pii-reverse-proxy/pii-reverse-proxy/node_modules \
+      #     $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
+
+      # - name: Kill existing node processes and run the app
+      #   run: |
+      #     ssh $SSH_USER@$SSH_HOST \
+      #     "pkill -15 node; \
+      #     (cd $SSH_REMOTE_PATH; \
+      #     nohup node index.js > /dev/null 2>&1 &)"
