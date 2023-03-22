@@ -46,9 +46,9 @@ const logAudit = (req) => {
   const userId = req.headers['x-hasura-user-id'];
   const userRole = req.headers['x-hasura-user-role'];
   const organizationId = req.headers['x-hasura-organization-id'];
-  const query = req.body.query;
+  const request = req.body;
 
-  const logRow = { timestamp, query, userId, userRole, organizationId };
+  const logRow = { timestamp, request, userId, userRole, organizationId };
 
   // append the log row to a file
   fs.appendFile('audit.log', JSON.stringify(logRow) + '\n', (err) => {
