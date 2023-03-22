@@ -8,7 +8,7 @@ const app = express();
 const PORT = 8900;
 
 // PII GraphQL Server URL
-const DESTINATION_HOST = `http://3.238.57.115:8080`;
+const DESTINATION_HOST = `http://52.21.27.16:8080`;
 
 const handleRequest = async (req, _, next) => {
   try {
