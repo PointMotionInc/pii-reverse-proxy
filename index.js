@@ -5,10 +5,11 @@ var bodyParser = require('body-parser')
 const fs = require('fs');
 const app = express();
 
-const PORT = 8900;
+const PORT = 8000;
 
 // PII GraphQL Server URL
-const DESTINATION_HOST = `http://52.21.27.16:8080`;
+// TODO: set destination host as per the env
+const DESTINATION_HOST = `https://phi.dev.pointmotioncontrol.com`;
 
 const handleRequest = async (req, _, next) => {
   try {
