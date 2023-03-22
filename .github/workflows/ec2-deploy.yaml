@@ -66,11 +66,11 @@ jobs:
 
       - name: Copy Files Over Remote Server
         run: |
-          rsync -avzr --delete ./node_modules ./index.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
+          rsync -avzr --delete ./node_modules ./proxy.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
 
-      # - name: Kill existing node processes and run the app
-      #   run: |
-      #     ssh $SSH_USER@$SSH_HOST \
-      #     "pkill -15 node; \
-      #     (cd $SSH_REMOTE_PATH; \
-      #     nohup node index.js > /dev/null 2>&1 &)"
+      - name: Kill existing node processes and run the app
+        run: |
+          ssh $SSH_USER@$SSH_HOST \
+          "kill -9 $(ps aux | grep \"node proxy.js\" | cut -d ' ' -f5)
+          (cd $SSH_REMOTE_PATH; \
+          nohup node proxy.js > /dev/null 2>&1 &)"

@@ -13,15 +13,17 @@ const DESTINATION_HOST = `https://phi.dev.pointmotioncontrol.com`;
 
 const handleRequest = async (req, _, next) => {
   try {
-    const gqlQuery = req.body.query;
-    const parsedQuery = parse(gqlQuery);
+    if (req && req.body && req.body.query) {
+      const gqlQuery = req.body.query;
+      const parsedQuery = parse(gqlQuery);
 
-    const isHealthRecordsQuery = parsedQuery.definitions.some(def => def.kind === 'OperationDefinition' && def.operation === 'query' && def.selectionSet.selections.some(sel => sel.name.value.includes('health_records')));
-    if (isHealthRecordsQuery) {
-      try {
-        logAudit(req);
-      } catch (error) {
-        console.error(error);
+      const isHealthRecordsQuery = parsedQuery.definitions.some(def => def.kind === 'OperationDefinition' && def.operation === 'query' && def.selectionSet.selections.some(sel => sel.name.value.includes('health_records')));
+      if (isHealthRecordsQuery) {
+        try {
+          logAudit(req);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   } catch (error) {
