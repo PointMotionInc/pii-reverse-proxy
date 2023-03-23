@@ -40,18 +40,14 @@ const logAudit = (req) => {
   // console.log(req.headers);
   const timestamp = new Date().toISOString();
 
-  // const token = req.headers.authorization.split(' ')[1];
-  // const parsedToken = parseJwt(token);
-  // const userId = parsedToken['https://hasura.io/jwt/claims']['x-hasura-user-id'];
-  // const userRole = parsedToken['https://hasura.io/jwt/claims']['x-hasura-default-role'];
-  // const organizationId = parsedToken['https://hasura.io/jwt/claims']['x-hasura-organization-id'];
+  const token = req.headers.authorization.split(' ')[1];
+  const parsedToken = parseJwt(token);
+  const accessByUserId = parsedToken['https://hasura.io/jwt/claims']['x-hasura-user-id'];
+  const accessByUserRole = parsedToken['https://hasura.io/jwt/claims']['x-hasura-default-role'];
+  const accessByOrganizationId = parsedToken['https://hasura.io/jwt/claims']['x-hasura-organization-id'];
 
-  const userId = req.headers['x-hasura-user-id'];
-  const userRole = req.headers['x-hasura-user-role'];
-  const organizationId = req.headers['x-hasura-organization-id'];
   const request = req.body;
-
-  const logRow = { timestamp, request, userId, userRole, organizationId };
+  const logRow = { timestamp, request, accessByUserId, accessByUserRole, accessByOrganizationId };
 
   // append the log row to a file
   fs.appendFile('audit.log', JSON.stringify(logRow) + '\n', (err) => {
