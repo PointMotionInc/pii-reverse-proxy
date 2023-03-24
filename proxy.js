@@ -7,9 +7,11 @@ const app = express();
 
 const PORT = 8000;
 
-// PII GraphQL Server URL
-// TODO: set destination host as per the env
-const DESTINATION_HOST = `https://phi.dev.pointmotioncontrol.com`;
+// Set destination host as per the env.
+const LOCAL_DESTINATION_HOST = 'http://localhost:8081';
+const DEV_DESTINATION_HOST = 'https://phi.dev.pointmotioncontrol.com';
+const STAGE_DESTINATION_HOST = 'https://phi.stage.pointmotioncontrol.com';
+const PROD_DESTINATION_HOST = 'https://phi.prod.pointmotioncontrol.com';
 
 const handleRequest = async (req, _, next) => {
   try {
@@ -63,8 +65,26 @@ const logAudit = (req) => {
   });
 }
 
+function dynamicTarget(req) {
+  // console.log(`x-hasura-env: ${req.headers['x-hasura-env']}`);
+  switch (req.headers['x-hasura-env']) {
+    case 'local':
+      return LOCAL_DESTINATION_HOST;
+    case 'development':
+      return DEV_DESTINATION_HOST;
+    case 'staging':
+      return STAGE_DESTINATION_HOST;
+    case 'production':
+      return PROD_DESTINATION_HOST;
+    default:
+      throw new Error('Invalid [x-hasura-env] header!');
+      break;
+  }
+}
+
 const graphqlProxy = createProxyMiddleware({
-  target: DESTINATION_HOST,
+  target: LOCAL_DESTINATION_HOST,
+  router: dynamicTarget,
   changeOrigin: true,
   onProxyReq: (proxyReq, req, res) => {
     if (!req.body || !Object.keys(req.body).length) {
