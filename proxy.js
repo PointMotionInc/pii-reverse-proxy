@@ -8,7 +8,7 @@ const app = express();
 const PORT = 8000;
 
 // Set destination host as per the env.
-const LOCAL_DESTINATION_HOST = 'http://localhost:8081';
+const LOCAL_DESTINATION_HOST = 'http://host.docker.internal:8081';
 const DEV_DESTINATION_HOST = 'https://phi.dev.pointmotioncontrol.com';
 const STAGE_DESTINATION_HOST = 'https://phi.stage.pointmotioncontrol.com';
 const PROD_DESTINATION_HOST = 'https://phi.prod.pointmotioncontrol.com';
