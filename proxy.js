@@ -77,7 +77,9 @@ function dynamicTarget(req) {
     case 'production':
       return PROD_DESTINATION_HOST;
     default:
-      throw new Error('Invalid [x-hasura-env] header!');
+      const error = new Error('Invalid [x-hasura-env] header!');
+      error.stack = undefined;
+      throw error;
       break;
   }
 }
