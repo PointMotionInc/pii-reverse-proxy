@@ -7,11 +7,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     container_name: pii_reverse_proxy_local
-    profiles:
-      - local
+    environment:
+      - PII_REVERSE_PROXY_FORWARD_HOST=${PII_REVERSE_PROXY_FORWARD_HOST}
     restart: unless-stopped
     ports:
-      - 8000:8000
+      - 8001:8001
     # For hot reloading
     volumes:
       - ./:/usr/src/pii-reverse-proxy/local
