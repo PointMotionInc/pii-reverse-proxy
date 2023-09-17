@@ -64,10 +64,10 @@ jobs:
          echo "Listing files...."
          ls -la
 
-      - name: Copy Files Over Remote Server
-        run: |
-          rsync -avzr --delete ./node_modules ./proxy.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
+      # - name: Copy Files Over Remote Server
+      #   run: |
+      #     rsync -avzr --delete ./node_modules ./proxy.js $SSH_USER@$SSH_HOST:$SSH_REMOTE_PATH
 
-      - name: Restart pii-proxy app.
-        run: |
-          ssh $SSH_USER@$SSH_HOST "pm2 restart pii-proxy"
+      # - name: Restart pii-proxy app.
+      #   run: |
+      #     ssh $SSH_USER@$SSH_HOST "pm2 restart pii-proxy"

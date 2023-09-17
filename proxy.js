@@ -5,13 +5,9 @@ var bodyParser = require('body-parser')
 const fs = require('fs');
 const app = express();
 
-const PORT = 8000;
-
-// Set destination host as per the env.
-const LOCAL_DESTINATION_HOST = 'http://host.docker.internal:8081';
-const DEV_DESTINATION_HOST = 'https://phi.dev.pointmotioncontrol.com';
-const STAGE_DESTINATION_HOST = 'https://phi.stage.pointmotioncontrol.com';
-const PROD_DESTINATION_HOST = 'https://phi.prod.pointmotioncontrol.com';
+const PORT = 8001;
+const DESTINATION_HOST = process.env.PII_REVERSE_PROXY_FORWARD_HOST;
+console.log('DESTINATION_HOST:', DESTINATION_HOST);
 
 const handleRequest = async (req, _, next) => {
   try {
@@ -65,28 +61,27 @@ const logAudit = (req) => {
   });
 }
 
-function dynamicTarget(req) {
+// function dynamicTarget(req) {
   // console.log(`x-hasura-env: ${req.headers['x-hasura-env']}`);
-  switch (req.headers['x-hasura-env']) {
-    case 'local':
-      return LOCAL_DESTINATION_HOST;
-    case 'development':
-      return DEV_DESTINATION_HOST;
-    case 'staging':
-      return STAGE_DESTINATION_HOST;
-    case 'production':
-      return PROD_DESTINATION_HOST;
-    default:
-      const error = new Error('Invalid [x-hasura-env] header!');
-      error.stack = undefined;
-      throw error;
-      break;
-  }
-}
+  // switch (req.headers['x-hasura-env']) {
+  //   case 'local':
+  //     return LOCAL_DESTINATION_HOST;
+  //   case 'development':
+  //     return DEV_DESTINATION_HOST;
+  //   case 'staging':
+  //     return STAGE_DESTINATION_HOST;
+  //   case 'production':
+  //     return PROD_DESTINATION_HOST;
+  //   default:
+  //     const error = new Error('Invalid [x-hasura-env] header!');
+  //     error.stack = undefined;
+  //     throw error;
+  //     break;
+  // }
+// }
 
 const graphqlProxy = createProxyMiddleware({
-  target: LOCAL_DESTINATION_HOST,
-  router: dynamicTarget,
+  target: DESTINATION_HOST,
   changeOrigin: true,
   onProxyReq: (proxyReq, req, res) => {
     if (!req.body || !Object.keys(req.body).length) {
