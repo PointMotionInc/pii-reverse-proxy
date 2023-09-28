@@ -1,6 +1,9 @@
 # Introduction
 The reverse proxy server is used to log PII (Personally Identifiable Information) access, this is required for regulatory compliance. Reverse proxy server does the following when a request to fetch PII is made.
 
+Please refer to the [documentation](https://docs.pointmotion.us) for more information.
+
+
 ```
 1. it makes a log entry specifying who made the request, and PII fields requested.
 2. appends logs to `audit.log` file on disk
